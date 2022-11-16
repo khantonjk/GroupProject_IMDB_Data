@@ -6,4 +6,4 @@ Samt så kan vi se till att våra variable namn hänger samman
 För att lätt kunna integera koder osv senare.
 
 # Hur GitHub fungerar
-Bara skriv kod i egna program sen laddar ni upp det i den här mappen
+Bara skriv kod i egna program sen laddar ni upp det i den här mappen. Med relevanta namn osv
