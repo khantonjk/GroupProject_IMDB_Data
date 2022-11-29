@@ -1,1 +1,108 @@
-print("Hello GitHub")
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+import sklearn.preprocessing as skl_pre
+import sklearn.linear_model as skl_lm
+import sklearn.discriminant_analysis as skl_da
+import sklearn.neighbors as skl_nb
+import sklearn.model_selection as skl_ms
+
+
+#If in different place than same directory as code
+Directory_Training_Data = r"C:\Users\anton\OneDrive\Dokument\Uppsala Universitet\SML\Project_main_rep\GroupProject_IMDB_Data\train.csv"
+#Directory_Training_Data = "train.csv" 
+Training_Data_df = pd.read_csv(Directory_Training_Data)
+#Import directory for train data
+
+#If in different place than same directory as code
+Directory_test_Data = r"C:\Users\anton\OneDrive\Dokument\Uppsala Universitet\SML\Project_main_rep\GroupProject_IMDB_Data\test.csv"
+#Directory_test_Data = "test.csv" 
+Test_Data_df = pd.read_csv(Directory_test_Data)
+#Import directory for test data
+
+
+#All Categories except "Lead"
+Categories = ["Number words female", "Total words", "Number of words lead", \
+              "Difference in words lead and co-lead", "Number of male actors",\
+              "Year", "Number of female actors", "Number words male", "Gross",\
+              "Mean Age Male", "Mean Age Female", "Age Lead", "Age Co-Lead"]
+
+
+AllCategories = ["Number words female", "Total words", "Number of words lead", \
+              "Difference in words lead and co-lead", "Number of male actors",\
+              "Year", "Number of female actors", "Number words male", "Gross",\
+              "Mean Age Male", "Mean Age Female", "Age Lead", "Age Co-Lead"\
+              , "Lead"]
+
+
+train_data = Training_Data_df.loc # 
+test_data = Test_Data_df.loc
+X_train = train_data[:,'Number words female':'Age Co-Lead']
+X_test = test_data[:,'Number words female':'Age Co-Lead']
+Y_train = train_data[:,'Lead']
+
+X = train_data[:,'Number words female':'Age Co-Lead']
+X_test = test_data[:,'Number words female':'Age Co-Lead']
+y = train_data[:,'Lead']
+
+# print(X_train.loc[:,['Total words','Age Lead']])
+
+# LDA
+
+LDA_data = X_train[['Number of male actors','Number of female actors','Number of words lead',
+'Age Lead','Gross','Age Lead','Age Co-Lead','Year']]
+model_LDA = skl_da.LinearDiscriminantAnalysis()
+model_LDA.fit(LDA_data,Y_train)
+prediction_LDA = model_LDA.predict(LDA_data)
+err_LDA = np.mean(prediction_LDA!=Y_train)
+print('Error rate LDA: '+ str(err_LDA))
+
+
+
+
+
+# QDA
+
+QDA_data = X_train[["Number words female", "Total words", "Number of words lead", \
+              "Difference in words lead and co-lead", "Number of male actors",\
+              "Year", "Number of female actors", "Number words male", "Gross",\
+              "Mean Age Male", "Mean Age Female", "Age Lead", "Age Co-Lead"]]
+model_QDA = skl_da.QuadraticDiscriminantAnalysis()
+model_QDA.fit(QDA_data,Y_train)
+prediction_QDA = model_QDA.predict(QDA_data)
+err_QDA = np.mean(prediction_QDA != Y_train)
+print('Error rate for QDA: ' + str(err_QDA))
+print(prediction_QDA)
+print(type(prediction_QDA))
+
+
+
+# Cross-validation
+
+n_fold = 10
+models = [skl_da.LinearDiscriminantAnalysis(),skl_da.QuadraticDiscriminantAnalysis()]
+missclassification = np.zeros((n_fold, len(models)))
+cv = skl_ms.KFold(n_splits=n_fold, random_state=1, shuffle= True)
+
+for i, (train_index, val_index) in enumerate(cv.split(X_train)):
+    X_DA, X_val = X.iloc[train_index], X.iloc[val_index]
+    y_DA,Y_val = y.iloc[train_index], y.iloc[val_index]
+
+    for m in range(np.shape(models)[0]):
+        model = models[m]
+        model.fit(X_DA, y_DA)
+        prediction = model.predict(X_val)
+        missclassification[i,m] = np.mean(prediction != Y_val)
+
+plt.boxplot(missclassification)
+plt.title('Cross validation')
+plt.xticks(np.arange(3)+1,('LDA','QDA',' '))
+plt.ylabel('Validation error')
+plt.show()
+
+# All male prediction
+prediction_Male = np.array(['Male']*len(Y_train))
+err_Male = np.mean(prediction_Male != Y_train)
+print('Error rate for all male prediction: ' + str(err_Male))

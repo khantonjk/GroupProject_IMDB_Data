@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 
 
 #If in different place than same directory as code
-#Directory_Training_Data = r"x:\desktop\Statistical Machine Learning\Projecty\train.csv"
-Directory_Training_Data = "train.csv" 
+Directory_Training_Data = r"C:\Users\anton\OneDrive\Dokument\Uppsala Universitet\SML\Project_main_rep\GroupProject_IMDB_Data\train.csv"
+#Directory_Training_Data = "train.csv" 
 Training_Data_df = pd.read_csv(Directory_Training_Data)
 #Import directory for train data
 
@@ -142,5 +142,8 @@ plt.plot(Female_Lead[Category_xaxis],Female_Lead[Category_yaxis],'.', \
          label='Female Lead')
 
 plt.legend()
+
+
+plt.show() # Använd om du vill se graferna
 
 
