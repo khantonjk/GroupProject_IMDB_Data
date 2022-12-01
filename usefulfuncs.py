@@ -19,13 +19,13 @@ def createX_input(df, dLst, label):
 
 
 def train2tt(df,test_size): #input: df & percentage size
+    # example input(data_df,0.5):
     # sampling indices for training
-    split = 1/test_size
     np.random.seed(1)
-    trainI = np.random.choice(df.shape[0], size=round(len(df) / split), replace=False)  # returns random index numbers
+    trainI = np.random.choice(df.shape[0], size=round(len(df)*test_size), replace=False)  # returns random index numbers
     trainIndex = df.index.isin(trainI)  # return True/False list, true at index number chosen above
 
     # the two sets of data
-    train = df.iloc[trainIndex]  # training set
-    test = df.iloc[~trainIndex]  # test set
+    train = df.iloc[~trainIndex]  # training set
+    test = df.iloc[trainIndex]  # test set
     return train, test
