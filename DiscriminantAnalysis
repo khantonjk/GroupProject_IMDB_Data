@@ -3,8 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+import sklearn.preprocessing as skl_pre
+import sklearn.linear_model as skl_lm
 import sklearn.discriminant_analysis as skl_da
-
+import sklearn.neighbors as skl_nb
 import sklearn.model_selection as skl_ms
 
 
@@ -47,6 +49,8 @@ def train2tt(df,test_size): #input: df & percentage size
     return train, test
 
 
+
+
 #All Categories except "Lead"
 Categories = ["Number words female", "Total words", "Number of words lead", \
               "Difference in words lead and co-lead", "Number of male actors",\
@@ -59,6 +63,12 @@ AllCategories = ["Number words female", "Total words", "Number of words lead", \
               "Year", "Number of female actors", "Number words male", "Gross",\
               "Mean Age Male", "Mean Age Female", "Age Lead", "Age Co-Lead"\
               , "Lead"]
+
+
+# X_list = createX_input(Training_Data_df,range(1040),'Total words') Använda hur?
+
+Train_X, Test_X = train2tt(Training_Data_df,0.9)
+print(len(Test_X))
 
 
 train_data = Training_Data_df.loc # 
@@ -100,9 +110,9 @@ QDA_data = X_train[["Number words female", "Total words", "Number of words lead"
               "Mean Age Male", "Mean Age Female", "Age Lead", "Age Co-Lead"]]
 
 model_QDA = skl_da.QuadraticDiscriminantAnalysis()
-model_QDA.fit(QDA_data[0:500],Y_train[0:500])
-prediction_QDA = model_QDA.predict(QDA_data[501:1039])
-err_QDA = np.mean(prediction_QDA != Y_train[501:1039])
+model_QDA.fit(QDA_data,Y_train)
+prediction_QDA = model_QDA.predict(QDA_data)
+err_QDA = np.mean(prediction_QDA != Y_train)
 print('Error rate for QDA: ' + str(err_QDA))
 
 
@@ -128,12 +138,8 @@ plt.boxplot(missclassification)
 plt.title('Cross validation')
 plt.xticks(np.arange(3)+1,('LDA','QDA',' '))
 plt.ylabel('Validation error')
-plt.show()
+# plt.show()
 
-
-mean_missclaff = np.mean(missclassification, axis=0)
-
-print('Missclassification crossvalidation: ' + str(mean_missclaff))
 
 
 # All male prediction
